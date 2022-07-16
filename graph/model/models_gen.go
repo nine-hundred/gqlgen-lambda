@@ -2,19 +2,13 @@
 
 package model
 
-type NewTodo struct {
-	Text   string `json:"text"`
-	UserID string `json:"userId"`
-}
+import (
+	"gqlgen-lambda/ent/todo"
+)
 
-type Todo struct {
-	ID   string `json:"id"`
-	Text string `json:"text"`
-	Done bool   `json:"done"`
-	User *User  `json:"user"`
-}
-
-type User struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+type TodoInput struct {
+	Status   todo.Status `json:"status"`
+	Priority *int        `json:"priority"`
+	Text     string      `json:"text"`
+	Parent   *string     `json:"parent"`
 }
