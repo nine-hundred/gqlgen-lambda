@@ -23,6 +23,28 @@ func (t *TodoQuery) CollectFields(ctx context.Context, satisfies ...string) (*To
 
 func (t *TodoQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
+	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
+		switch field.Name {
+		case "children":
+			var (
+				path  = append(path, field.Name)
+				query = &TodoQuery{config: t.config}
+			)
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+				return err
+			}
+			t.withChildren = query
+		case "parent":
+			var (
+				path  = append(path, field.Name)
+				query = &TodoQuery{config: t.config}
+			)
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
+				return err
+			}
+			t.withParent = query
+		}
+	}
 	return nil
 }
 

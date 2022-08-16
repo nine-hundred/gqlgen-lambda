@@ -10,5 +10,5 @@ type TodoInput struct {
 	Status   todo.Status `json:"status"`
 	Priority *int        `json:"priority"`
 	Text     string      `json:"text"`
-	Parent   *string     `json:"parent"`
+	Parent   *int        `json:"parent"`
 }

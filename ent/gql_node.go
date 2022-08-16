@@ -51,7 +51,7 @@ func (t *Todo) Node(ctx context.Context) (node *Node, err error) {
 		ID:     t.ID,
 		Type:   "Todo",
 		Fields: make([]*Field, 4),
-		Edges:  make([]*Edge, 0),
+		Edges:  make([]*Edge, 2),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(t.Text); err != nil {
@@ -85,6 +85,26 @@ func (t *Todo) Node(ctx context.Context) (node *Node, err error) {
 		Type:  "int",
 		Name:  "priority",
 		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "Todo",
+		Name: "children",
+	}
+	err = t.QueryChildren().
+		Select(todo.FieldID).
+		Scan(ctx, &node.Edges[0].IDs)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "Todo",
+		Name: "parent",
+	}
+	err = t.QueryParent().
+		Select(todo.FieldID).
+		Scan(ctx, &node.Edges[1].IDs)
+	if err != nil {
+		return nil, err
 	}
 	return node, nil
 }
