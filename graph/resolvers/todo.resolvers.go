@@ -1,21 +1,29 @@
-package graph
+package resolvers
 
 // This file will be automatically regenerated based on the schema, any resolver implementations
 // will be copied through when generating and any unknown code will be moved to the end.
 
 import (
 	"context"
-	"fmt"
+	"gqlgen-lambda/ent"
 	"gqlgen-lambda/graph/generated"
 	"gqlgen-lambda/graph/model"
 )
 
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	panic(fmt.Errorf("not implemented"))
+// CreateTodo is the resolver for the createTodo field.
+func (r *mutationResolver) CreateTodo(ctx context.Context, todo model.TodoInput) (*ent.Todo, error) {
+	return r.client.Todo.Create().
+		SetText(todo.Text).
+		SetStatus(todo.Status).
+		SetNillablePriority(todo.Priority).
+		SetNillableParentID(todo.Parent).
+		Save(ctx)
 }
 
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	panic(fmt.Errorf("not implemented"))
+// Todos is the resolver for the todos field.
+func (r *queryResolver) Todos(ctx context.Context) ([]*ent.Todo, error) {
+	return r.client.Todo.Query().
+		All(ctx)
 }
 
 // Mutation returns generated.MutationResolver implementation.
