@@ -21,9 +21,19 @@ func (r *mutationResolver) CreateTodo(ctx context.Context, todo model.TodoInput)
 }
 
 // Todos is the resolver for the todos field.
-func (r *queryResolver) Todos(ctx context.Context) ([]*ent.Todo, error) {
+func (r *queryResolver) Todos(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.TodoOrder) (*ent.TodoConnection, error) {
 	return r.client.Todo.Query().
-		All(ctx)
+		Paginate(ctx, after, first, before, last, ent.WithTodoOrder(orderBy))
+}
+
+// Node is the resolver for the node field.
+func (r *queryResolver) Node(ctx context.Context, id int) (ent.Noder, error) {
+	return r.client.Noder(ctx, id)
+}
+
+// Nodes is the resolver for the nodes field.
+func (r *queryResolver) Nodes(ctx context.Context, ids []int) ([]ent.Noder, error) {
+	return r.client.Noders(ctx, ids)
 }
 
 // Mutation returns generated.MutationResolver implementation.

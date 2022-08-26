@@ -8,9 +8,13 @@ enum Status {
     COMPLETED
 }
 
+interface Node {
+    id: ID!
+}
+
 # Define an object type and map it later to the generated Ent model.
 # https://graphql.org/learn/schema/#object-types-and-fields
-type Todo {
+type Todo implements Node {
     id: ID!
     createdAt: Time
     status: Status!
@@ -37,5 +41,51 @@ type Mutation {
 
 # Define a query for getting all todos.
 type Query {
-    todos: [Todo!]
+    todos(
+        after: Cursor
+        first: Int
+        before: Cursor
+        last: Int
+        orderBy: TodoOrder
+    ): TodoConnection!
+    node(id: ID!): Node
+    nodes(ids: [ID!]!): [Node]!
 }
+
+scalar Cursor
+
+type PageInfo {
+    hasNextPage: Boolean!
+    hasPreviousPage: Boolean!
+    startCursor: Cursor
+    endCursor: Cursor
+}
+
+type TodoConnection {
+    totalCount: Int!
+    pageInfo: PageInfo!
+    edges: [TodoEdge]
+}
+
+type TodoEdge {
+    node: Todo
+    cursor: Cursor!
+}
+
+enum TodoOrderField {
+    CREATED_AT
+    PRIORITY
+    STATUS
+    TEXT
+}
+
+enum OrderDirection {
+    ASC
+    DESC
+}
+
+input TodoOrder {
+    direction: OrderDirection!
+    field: TodoOrderField
+}
+
