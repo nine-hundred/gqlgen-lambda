@@ -17,9 +17,15 @@ type Todo struct {
 func (Todo) Fields() []ent.Field {
 	return []ent.Field{
 		field.Text("text").
+			Annotations(
+				entgql.OrderField("TEXT"),
+			).
 			NotEmpty(),
 		field.Time("created_at").
 			Default(time.Now).
+			Annotations(
+				entgql.OrderField("CREATED_AT"),
+			).
 			Immutable(),
 		field.Enum("status").
 			NamedValues(
@@ -31,6 +37,9 @@ func (Todo) Fields() []ent.Field {
 			).
 			Default("IN_PROGRESS"),
 		field.Int("priority").
+			Annotations(
+				entgql.OrderField("PRIORITY"),
+			).
 			Default(0),
 	}
 }
